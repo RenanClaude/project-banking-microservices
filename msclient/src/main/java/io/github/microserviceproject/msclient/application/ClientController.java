@@ -47,11 +47,8 @@ public class ClientController {
   public ResponseEntity clientData(@RequestParam("cpf") String cpf) {
     Optional<Client> client = service.getByCpf(cpf);
 
-    if (client.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
+    return client.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
-    return ResponseEntity.ok(client.get());
   }
 
 }
