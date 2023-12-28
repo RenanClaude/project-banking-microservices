@@ -1,5 +1,7 @@
 package io.github.microserviceproject.mscreditappraiser.application;
 
+import io.github.microserviceproject.mscreditappraiser.application.exception.ClientDataNotFoundException;
+import io.github.microserviceproject.mscreditappraiser.application.exception.CommunicationErrorMicroservicesException;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientSituation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,10 +25,16 @@ public class CreditAppraiserController {
   }
 
   @GetMapping(value = "client-situation", params = "cpf")
-  public ResponseEntity<ClientSituation> checkClientSituation(@RequestParam("cpf") String cpf) {
-    ClientSituation clientSituation = creditAppraiserService.getClientSituation(cpf);
+  public ResponseEntity checkClientSituation(@RequestParam("cpf") String cpf) {
+    try {
+      ClientSituation clientSituation = creditAppraiserService.getClientSituation(cpf);
+      return ResponseEntity.status(HttpStatus.OK).body(clientSituation);
 
-    return ResponseEntity.status(HttpStatus.OK).body(clientSituation);
+    } catch (ClientDataNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+    } catch (CommunicationErrorMicroservicesException e) {
+      return ResponseEntity.status(HttpStatus.resolve(e.getStatus())).body(e.getMessage());
+    }
   }
-
 }
