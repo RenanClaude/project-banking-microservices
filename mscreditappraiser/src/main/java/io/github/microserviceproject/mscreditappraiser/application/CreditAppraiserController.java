@@ -2,12 +2,15 @@ package io.github.microserviceproject.mscreditappraiser.application;
 
 import io.github.microserviceproject.mscreditappraiser.application.exception.ClientDataNotFoundException;
 import io.github.microserviceproject.mscreditappraiser.application.exception.CommunicationErrorMicroservicesException;
+import io.github.microserviceproject.mscreditappraiser.domain.model.AssessmentData;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientSituation;
+import io.github.microserviceproject.mscreditappraiser.domain.model.ReturnOfClientEvaluation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,5 +39,22 @@ public class CreditAppraiserController {
     } catch (CommunicationErrorMicroservicesException e) {
       return ResponseEntity.status(HttpStatus.resolve(e.getStatus())).body(e.getMessage());
     }
+  }
+
+  @PostMapping
+  public ResponseEntity carryOutTheAssessment(@RequestBody AssessmentData data) {
+    try {
+      ReturnOfClientEvaluation returnOfClientEvaluation =
+          creditAppraiserService.carryOutAssessment(data.getCpf(), data.getIncome());
+
+      return ResponseEntity.status(HttpStatus.OK).body(returnOfClientEvaluation);
+
+    } catch (ClientDataNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+    } catch (CommunicationErrorMicroservicesException e) {
+      return ResponseEntity.status(HttpStatus.resolve(e.getStatus())).body(e.getMessage());
+    }
+
   }
 }

@@ -4,11 +4,15 @@ import feign.FeignException;
 import feign.FeignException.FeignClientException;
 import io.github.microserviceproject.mscreditappraiser.application.exception.ClientDataNotFoundException;
 import io.github.microserviceproject.mscreditappraiser.application.exception.CommunicationErrorMicroservicesException;
+import io.github.microserviceproject.mscreditappraiser.domain.model.ApprovedCard;
+import io.github.microserviceproject.mscreditappraiser.domain.model.Card;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientCard;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientData;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientSituation;
+import io.github.microserviceproject.mscreditappraiser.domain.model.ReturnOfClientEvaluation;
 import io.github.microserviceproject.mscreditappraiser.infra.client.CardsResource;
 import io.github.microserviceproject.mscreditappraiser.infra.client.ClientResource;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +38,44 @@ public class CreditAppraiserService {
           .client(clientDataResponse.getBody())
           .cards(clientCardResponse.getBody())
           .build();
+
+    } catch (FeignException.FeignClientException e) {
+      int status = e.status();
+
+      if (HttpStatus.NOT_FOUND.value() == status) {
+        throw new ClientDataNotFoundException();
+      }
+      throw new CommunicationErrorMicroservicesException(e.getMessage(), e.status());
+    }
+  }
+
+  public ReturnOfClientEvaluation carryOutAssessment(String cpf, Long income)
+      throws ClientDataNotFoundException, CommunicationErrorMicroservicesException {
+    try {
+      ResponseEntity<ClientData> clientDataResponse = clientResource.clientData(cpf);
+      ResponseEntity<List<Card>> cardsResponse =
+          cardsResource.getCardsIncomeLessThanOrEqualTo(income);
+
+      List<Card> cards = cardsResponse.getBody();
+
+      List<ApprovedCard> cardList = cards.stream().map(card -> {
+        ClientData clientData = clientDataResponse.getBody();
+
+        BigDecimal basicLimit = card.getBasicLimit();
+        BigDecimal ageBD = BigDecimal.valueOf(clientData.getAge());
+
+        BigDecimal factor = ageBD.divide(BigDecimal.valueOf(10));
+        BigDecimal approvedLimit = factor.multiply(basicLimit);
+
+        ApprovedCard approvedCard = new ApprovedCard();
+        approvedCard.setCard(card.getName());
+        approvedCard.setBrand(card.getBrand());
+        approvedCard.setApprovedLimit(approvedLimit);
+
+        return approvedCard;
+      }).toList();
+
+      return new ReturnOfClientEvaluation(cardList);
 
     } catch (FeignException.FeignClientException e) {
       int status = e.status();

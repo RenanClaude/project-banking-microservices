@@ -1,5 +1,6 @@
 package io.github.microserviceproject.mscreditappraiser.infra.client;
 
+import io.github.microserviceproject.mscreditappraiser.domain.model.Card;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientCard;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientData;
 import java.util.List;
@@ -13,5 +14,9 @@ public interface CardsResource {
 
   @GetMapping(params = "cpf")
   ResponseEntity<List<ClientCard>> getCardsByClient(@RequestParam("cpf") String cpf);
+
+  @GetMapping(params = "income")
+  public ResponseEntity<List<Card>> getCardsIncomeLessThanOrEqualTo(
+      @RequestParam("income") Long income);
 
 }

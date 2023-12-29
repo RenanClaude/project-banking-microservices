@@ -3,9 +3,9 @@ package io.github.microserviceproject.mscreditappraiser.domain.model;
 import lombok.Data;
 
 @Data
-public class ClientData {
+public class AssessmentData {
+  private String cpf;
+  private Long income;
 
-  private Long id;
-  private String name;
-  private Integer age;
+
 }
