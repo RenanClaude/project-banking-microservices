@@ -48,7 +48,5 @@ public class ClientController {
     Optional<Client> client = service.getByCpf(cpf);
 
     return client.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-
   }
-
 }

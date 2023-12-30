@@ -61,7 +61,7 @@ public class CreditAppraiserController {
   }
 
   @PostMapping("card-requests")
-  public ResponseEntity requestCard(CardIssuanceRequestData data) {
+  public ResponseEntity requestCard(@RequestBody CardIssuanceRequestData data) {
     try {
       CardRequestProtocol cardRequestProtocol =
           this.creditAppraiserService.requestCardIssuance(data);

@@ -23,14 +23,15 @@ public class CardIssuanceSubscriber {
   public void receiveIssuanceRequest(@Payload String payload) {
     try {
       var mapper = new ObjectMapper();
+
       CardIssuanceRequestData data = mapper.readValue(payload, CardIssuanceRequestData.class);
 
       Card card = cardRepository.findById(data.getCardId()).orElseThrow();
+
       ClientCard clientCard = new ClientCard();
       clientCard.setCard(card);
       clientCard.setCpf(data.getCpf());
       clientCard.setLimit(data.getLimitReleased());
-
       clientCardRepository.save(clientCard);
 
     } catch (Exception e) {
