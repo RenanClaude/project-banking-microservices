@@ -2,7 +2,10 @@ package io.github.microserviceproject.mscreditappraiser.application;
 
 import io.github.microserviceproject.mscreditappraiser.application.exception.ClientDataNotFoundException;
 import io.github.microserviceproject.mscreditappraiser.application.exception.CommunicationErrorMicroservicesException;
+import io.github.microserviceproject.mscreditappraiser.application.exception.ErrorInCardRequestException;
 import io.github.microserviceproject.mscreditappraiser.domain.model.AssessmentData;
+import io.github.microserviceproject.mscreditappraiser.domain.model.CardIssuanceRequestData;
+import io.github.microserviceproject.mscreditappraiser.domain.model.CardRequestProtocol;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientSituation;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ReturnOfClientEvaluation;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +58,17 @@ public class CreditAppraiserController {
     } catch (CommunicationErrorMicroservicesException e) {
       return ResponseEntity.status(HttpStatus.resolve(e.getStatus())).body(e.getMessage());
     }
+  }
 
+  @PostMapping("card-requests")
+  public ResponseEntity requestCard(CardIssuanceRequestData data) {
+    try {
+      CardRequestProtocol cardRequestProtocol =
+          this.creditAppraiserService.requestCardIssuance(data);
+      return ResponseEntity.ok(cardRequestProtocol);
+
+    } catch (ErrorInCardRequestException e) {
+      return ResponseEntity.internalServerError().body(e.getMessage());
+    }
   }
 }

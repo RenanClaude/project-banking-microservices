@@ -1,19 +1,23 @@
 package io.github.microserviceproject.mscreditappraiser.application;
 
 import feign.FeignException;
-import feign.FeignException.FeignClientException;
 import io.github.microserviceproject.mscreditappraiser.application.exception.ClientDataNotFoundException;
 import io.github.microserviceproject.mscreditappraiser.application.exception.CommunicationErrorMicroservicesException;
+import io.github.microserviceproject.mscreditappraiser.application.exception.ErrorInCardRequestException;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ApprovedCard;
 import io.github.microserviceproject.mscreditappraiser.domain.model.Card;
+import io.github.microserviceproject.mscreditappraiser.domain.model.CardIssuanceRequestData;
+import io.github.microserviceproject.mscreditappraiser.domain.model.CardRequestProtocol;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientCard;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientData;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ClientSituation;
 import io.github.microserviceproject.mscreditappraiser.domain.model.ReturnOfClientEvaluation;
 import io.github.microserviceproject.mscreditappraiser.infra.client.CardsResource;
 import io.github.microserviceproject.mscreditappraiser.infra.client.ClientResource;
+import io.github.microserviceproject.mscreditappraiser.infra.mqueue.CardIssuanceRequestPublisher;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,7 @@ public class CreditAppraiserService {
 
   private final ClientResource clientResource;
   private final CardsResource cardsResource;
+  private final CardIssuanceRequestPublisher CardIssuancePublisher;
 
   public ClientSituation getClientSituation(String cpf)
       throws ClientDataNotFoundException, CommunicationErrorMicroservicesException {
@@ -84,6 +89,17 @@ public class CreditAppraiserService {
         throw new ClientDataNotFoundException();
       }
       throw new CommunicationErrorMicroservicesException(e.getMessage(), e.status());
+    }
+  }
+
+  public CardRequestProtocol requestCardIssuance(CardIssuanceRequestData data) {
+    try {
+      this.CardIssuancePublisher.requestCard(data);
+      var protocol = UUID.randomUUID().toString();
+      return new CardRequestProtocol(protocol);
+
+    } catch (Exception e) {
+      throw new ErrorInCardRequestException(e.getMessage());
     }
   }
 }
