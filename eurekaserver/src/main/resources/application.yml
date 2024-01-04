@@ -5,14 +5,15 @@ spring:
     basic:
       enabled: true
     user:
-      name: mscourse-eureka-user
-      password: rouarcsuueeess-mke-r
+      name: eureka-user
+      password: rkuue-esear
 
 server:
   port: 8761
 
-eureke:
+eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+
 

@@ -8,6 +8,6 @@ server:
 eureka:
   client:
     service-url:
-      defaultzone: http://localhost:8761/eureka
+      defaultZone: http://eureka-user:rkuue-esear@localhost:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
