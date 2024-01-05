@@ -13,10 +13,21 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-user:rkuue-esear@localhost:8761/eureka
+      defaultZone: http://eureka-user:eureka-secret@localhost:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 mq:
   queues:
     card-issuances: card-issuances
+
+#Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+loggin:
+  file:
+    name: ./logs/log-file.log
