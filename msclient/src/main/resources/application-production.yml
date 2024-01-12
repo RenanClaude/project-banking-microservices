@@ -1,11 +1,6 @@
-spring:
+Spring:
   application:
-    name: mscreditappraiser
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    name: msclient
 
 server:
   port: 0
@@ -13,13 +8,9 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-user:eureka-secret@localhost:8761/eureka
+      defaultZone: http://eureka-user:eureka-secret@${EUREKA_SERVER}:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
-mq:
-  queues:
-    card-issuances: card-issuances
 
 #Actuator
 management:
