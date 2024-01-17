@@ -12,6 +12,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://${KEYCLOAK_SERVER}:${KEYCLOAK_PORT}/realms/mscourserealm
+          # UP using docker -> Frontend URL: http://ms-keycloak:8080
 
 server:
   port: 8080
