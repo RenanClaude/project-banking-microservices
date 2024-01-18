@@ -7,6 +7,10 @@ Banking Microservices é uma aplicação Web back-end desenvolvida para efetuar 
 A aplicação consiste em um serviço para emissão de cartões, havendo a possibilidade de solicitar de acordo com a renda do cliente. Dessa forma a aplicação também contém um avaliador de crédito. 
 O projeto foi configurado para utilizar a estrutura modular de microservices.
 
+### Eureka Server (eurekaserver)
+O Eureka serve como um catálogo de todos os serviços disponíveis do sistema do projeto. Quando um microservice é iniciado ele se registra no Eureka, informando a localização e outros metadados.
+Quando um microservice precisa se comunicar com outro, ele consulta o servidor Eureka para descobrir a localização do microservice desejado.
+
 ### Microservice de cliente (msclient)
 Microservice responsável pelos clientes, podendo criar um novo e verificar dados de um existente.
 
@@ -36,13 +40,15 @@ Pré-requisitos: Java 17
 
 ```bash
 # clonar repositório
-git clone https://github.com/devsuperior/sds1-wmazoni
+git clone https://github.com/RenanClaude/project-banking-microservices.git
 
-# entrar na pasta do projeto back end
-cd backend
+# entrar na pasta do projeto
+cd banking-microservice
 
 # executar o projeto
-./mvnw spring-boot:run
+execute "./mvnw spring-boot:run" para cada microservice e também para o Eureka e Gateway
+usuário do eureka: eureka-user
+senha do eureka: eureka-secret
 ```
 
 # Autor
