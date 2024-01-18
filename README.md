@@ -4,7 +4,8 @@
 # Sobre o projeto
 
 Banking Microservices é uma aplicação Web back-end desenvolvida para efetuar pequenos serviços de cartão de crédito.
-A aplicação consiste em um serviço para emissão de cartões, havendo a possibilidade de solicitar de acordo com a renda do cliente. Dessa forma a aplicação também contém um avaliador de crédito.
+A aplicação consiste em um serviço para emissão de cartões, havendo a possibilidade de solicitar de acordo com a renda do cliente. Dessa forma a aplicação também contém um avaliador de crédito. 
+O projeto foi configurado para utilizar a estrutura modular de microservices.
 
 ### Microservice de cliente (msclient)
 Microservice responsável pelos clientes, podendo criar um novo e verificar dados de um existente.
